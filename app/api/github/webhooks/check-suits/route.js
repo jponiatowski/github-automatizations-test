@@ -1,5 +1,6 @@
 export async function POST(request) {
-  console.log(request.json());
+  const body = await request.json();
+  console.log(body);
 
   return Response.json({ message: "ok" });
 }
