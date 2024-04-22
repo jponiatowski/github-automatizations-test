@@ -16,7 +16,7 @@ jobs:
 
       - name: Log deployments
         run: |
-          DEPLOYMENTS_URL="https://api.github.com/repos/${{ github.repository }}/deployments"
+          DEPLOYMENTS_URL="https://api.github.com/repos/${{ github.repository }}/deployments?environment=${{ github.event.pull_request.head.ref }}"
           DEPLOYMENTS_JSON=$(curl --header "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" --header "Accept: application/vnd.github.v3+json" $DEPLOYMENTS_URL)
           echo "Deployments JSON: $DEPLOYMENTS_JSON"
           DEPLOYMENT_IDS=$(echo $DEPLOYMENTS_JSON | jq -r '.[].id')
@@ -25,6 +25,7 @@ jobs:
       - name: Wait for Vercel deployment
         run: |
           VERCEL_DEPLOYMENT_URL="https://api.vercel.com/v5/now/deployments/${{ steps.log-deployments.outputs.deployment_id }}"
+          echo "Deplymnet URL: $VERCEL_DEPLOYMENT_URL"
           while true; do
             DEPLOYMENT_STATE=$(curl --header "Authorization: Bearer ${{ secrets.VERCEL_TOKEN }}" $VERCEL_DEPLOYMENT_URL | jq -r '.state')
             if [ "$DEPLOYMENT_STATE" == "READY" ]; then
