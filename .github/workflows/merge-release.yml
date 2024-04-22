@@ -20,7 +20,7 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           ref: ${{ github.event.pull_request.head.sha }}
-          checkName: 'Vercel'
+          checkName: 'github-automatizations-test'
           timeoutSeconds: 600
           intervalSeconds: 10
 
