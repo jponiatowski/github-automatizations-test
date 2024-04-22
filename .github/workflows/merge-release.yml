@@ -5,8 +5,7 @@ on:
     types: [opened]
     branches:
       - 'release/*'
-    paths-ignore:
-      - '**'
+
 jobs:
   check-vercel-deployments:
     if: github.event.pull_request.head.ref == 'dev'
