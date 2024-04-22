@@ -14,6 +14,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Log check names
+        run: |
+          CHECKS_URL="https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/checks"
+          CHECKS_JSON=$(curl --header "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" $CHECKS_URL)
+          CHECK_NAMES=$(echo $CHECKS_JSON | jq -r '.check_runs[].name')
+          echo "Check names: $CHECK_NAMES"
+
       - name: Wait for Vercel
         id: wait-vercel
         uses: fountainhead/action-wait-for-check@v1.0.0
