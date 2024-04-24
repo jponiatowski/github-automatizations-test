@@ -1,14 +1,14 @@
 import { Octokit } from "@octokit/rest";
 
 const octokit = new Octokit({
-  auth: "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",
+  auth: "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",
 });
 
 const versionRegex = new RegExp(/^\d+\.\d+\.\d+$/);
 
 async function release() {
   const version = process.argv?.[2];
-  console.log(process.argv);
+
   if (!version) {
     throw new Error("No version provided");
   }

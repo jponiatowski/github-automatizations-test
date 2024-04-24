@@ -18,7 +18,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           base: main
           branch: ${{ github.ref }}
-          title: Release ${{ github.ref#refs/heads/release/ }}
+          title: Release ${{ github.ref == 'refs/heads/release/' && '' || github.ref }}
 
       - name: Create Pull Request to pre-prod
         uses: peter-evans/create-pull-request@v3
@@ -26,4 +26,4 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           base: pre-prod
           branch: ${{ github.ref }}
-          title: Pre-release ${{ github.ref#refs/heads/release/ }}
+          title: Pre-release ${{ github.ref == 'refs/heads/release/' && '' || github.ref }}
