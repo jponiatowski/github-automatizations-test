@@ -15,13 +15,14 @@ jobs:
       - name: Get the version
         id: get_version
         run: |
-          if [[ "${GITHUB_REF}" =~ ^refs/heads/(release|hotfix)/ ]]; then
-            VERSION=${GITHUB_REF#refs/heads/}
-            VERSION=${VERSION#release/}
-            VERSION=${VERSION#hotfix/}
+            echo "GITHUB_REF: ${GITHUB_REF}"
+            if [[ "${GITHUB_REF}" =~ ^refs/heads/release/ ]]; then
+            VERSION=${GITHUB_REF#refs/heads/release/}
             echo "::set-output name=VERSION::${VERSION}"
-          else
+            else
             echo "::set-output name=VERSION::unknown"
+            fi
+
 
       - name: Check version
         run: |
