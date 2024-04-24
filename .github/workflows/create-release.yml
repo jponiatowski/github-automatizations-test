@@ -15,9 +15,9 @@ jobs:
       - name: Get the version
         id: get_version
         run: |
-            echo "GITHUB_REF: ${GITHUB_REF}"
-            if [[ "${GITHUB_REF}" =~ ^refs/heads/release/ ]]; then
-            VERSION=${GITHUB_REF#refs/heads/release/}
+            echo "GITHUB_HEAD_REF: ${GITHUB_HEAD_REF}"
+            if [[ "${GITHUB_HEAD_REF}" =~ ^refs/heads/release/ ]]; then
+            VERSION=${GITHUB_HEAD_REF#refs/heads/release/}
             echo "::set-output name=VERSION::${VERSION}"
             else
             echo "::set-output name=VERSION::unknown"
