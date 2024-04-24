@@ -1,8 +1,6 @@
 import { Octokit } from "@octokit/rest";
 
-const octokit = new Octokit({
-  auth: "",
-});
+const octokit = new Octokit({});
 
 const versionRegex = new RegExp(/^\d+\.\d+\.\d+$/);
 
@@ -42,10 +40,10 @@ async function release() {
     throw new Error("Creating release branch failed");
   }
 
-  console.log("Release branch created");
+  console.log(`Branch: release/${version} CREATED`);
 
   // Create dev to release branch PR
-  const pullRequest = await octokit.rest.pulls.create({
+  const devToReleaseBranch = await octokit.rest.pulls.create({
     owner: "jponiatowski",
     repo: "github-automatizations-test",
     title: `Release branch ${version}`,
@@ -53,11 +51,46 @@ async function release() {
     base: `release/${version}`,
   });
 
-  if (pullRequest.status !== 201) {
+  if (devToReleaseBranch.status !== 201) {
+    throw new Error("Creating pull request failed");
+  }
+  console.log(`PR: dev -> release/${version} CREATED`);
+
+  // Merge dev to release branch
+  const merge = await octokit.rest.pulls.merge({
+    owner: "jponiatowski",
+    repo: "github-automatizations-test",
+    pull_number: devToReleaseBranch.data.number,
+  });
+
+  if (merge.status !== 200) {
+    throw new Error("Merging pull request failed");
+  }
+  console.log(`PR: dev -> release/${version} MERGED`);
+
+  // Create release to pre-prod branch PR
+  const releaseBranchToPreProd = await octokit.rest.pulls.create({
+    owner: "jponiatowski",
+    repo: "github-automatizations-test",
+    title: `Pre-release ${version}`,
+    head: `release/${version}`,
+    base: `pre-prod`,
+  });
+
+  // Create release to main branch PR
+  const releaseBranchToMain = await octokit.rest.pulls.create({
+    owner: "jponiatowski",
+    repo: "github-automatizations-test",
+    title: `Release ${version}`,
+    head: `release/${version}`,
+    base: "master",
+  });
+
+  if (releaseBranchToMain.status !== 201) {
     throw new Error("Creating pull request failed");
   }
 
-  console.log("Pull request created created");
+  console.log(`PR: release/${version} -> main CREATED`);
 }
 
 release();
