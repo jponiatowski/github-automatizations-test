@@ -1,6 +1,8 @@
 import { Octokit } from "@octokit/rest";
 
-const octokit = new Octokit({});
+const octokit = new Octokit({
+  auth: "",
+});
 
 const versionRegex = new RegExp(/^\d+\.\d+\.\d+$/);
 
