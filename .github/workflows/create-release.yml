@@ -1,42 +1,26 @@
 name: Create Release
 
 on:
-  push:
-    branches:
+  pull_request:
+    types: [closed]
+    branches: 
       - master
 
 jobs:
-  create-release:
+  release:
     runs-on: ubuntu-latest
+    if: github.event.pull_request.merged && startsWith(github.head_ref, 'release/')
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-
-      - name: Get the version
-        id: get_version
-        run: |
-          echo "GITHUB_HEAD_REF: ${GITHUB_HEAD_REF}"
-          if [[ "${GITHUB_HEAD_REF}" =~ ^release/ ]]; then
-            VERSION=${GITHUB_HEAD_REF#release/}
-            echo "::set-output name=VERSION::${VERSION}"
-          else
-            echo "::set-output name=VERSION::unknown"
-          fi
-
-      - name: Check version
-        run: |
-          if [[ "${{ steps.get_version.outputs.VERSION }}" == "unknown" ]]; then
-            echo "Error: Version is unknown"
-            exit 1
-          fi
 
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: v${{ steps.get_version.outputs.VERSION }}
-          release_name: Release ${{ steps.get_version.outputs.VERSION }}
+          tag_name: ${{ github.head_ref }}
+          release_name: Release ${{ github.head_ref }}
           draft: false
           prerelease: false
