@@ -1,0 +1,29 @@
+name: Create Pull Request
+
+on:
+  push:
+    branches:
+      - release/*
+
+jobs:
+  create-pull-request:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Create Pull Request to main
+        uses: peter-evans/create-pull-request@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          base: master
+          branch: ${{ github.ref }}
+          title: Release ${{ github.ref == 'refs/heads/release/' && '' || github.ref }}
+
+      - name: Create Pull Request to pre-prod
+        uses: peter-evans/create-pull-request@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          base: pre-prod
+          branch: ${{ github.ref }}
+          title: Pre-release ${{ github.ref == 'refs/heads/release/' && '' || github.ref }}
