@@ -16,7 +16,7 @@ jobs:
         uses: peter-evans/create-pull-request@v3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          base: main
+          base: master
           branch: ${{ github.ref }}
           title: Release ${{ github.ref == 'refs/heads/release/' && '' || github.ref }}
 
